@@ -22,14 +22,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # DRF and documentation
-    # 'rest_framework',
+    'rest_framework',
     # 'django_filters',
-    # 'rest_framework.authtoken',
+    'rest_framework.authtoken',
     # 'djoser',
 
     # apps
     "api.apps.ApiConfig",
-    "users.apps.UserConfig"
+    "users.apps.UsersConfig"
 ]
 
 MIDDLEWARE = [
@@ -92,8 +92,8 @@ TIME_ZONE = 'Europe/Moscow'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
-
+STATIC_URL = "static/"
+AUTH_USER_MODEL = "users.User"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # REST_FRAMEWORK = {
