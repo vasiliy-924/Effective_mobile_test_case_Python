@@ -1,0 +1,23 @@
+name: 30_effective_mobide_test_case_python
+
+volumes:
+  pg_data:
+  static:
+
+services:
+  db:
+    container_name: effective-db
+    image: postgres:16
+    env_file: .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    
+  backend:
+    container_name: effective-backend
+    build: backend/
+    env_file: .env
+    volumes:
+      - static:/static
+      - ../data:/data
+    depends_on:
+      - db

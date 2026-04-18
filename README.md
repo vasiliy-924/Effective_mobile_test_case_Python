@@ -6,12 +6,13 @@
 - Аутентификация по токену: выдача/удаление токена
     - POST /api/auth/token/login
     - POST /api/auth/token/logout
-- Пользователи и профиль: список, профиль, "Я", аватар, подписки
+- Пользователи и профиль: список, профиль, "Я", аватар
     - GET /api/users
     - GET /api/users/{id}/
     - GET /api/users/me/
+    - ОБНОВИТЬ ИНФОМРАЦИЮ
     - PUT /api/users/me/avatar
-    - 
+
 
 Полная спецификация в OpenAPI - в docs.openapi-schema.yml
 
