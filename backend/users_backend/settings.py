@@ -8,9 +8,9 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv("SESECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
-ALLOWED_HOSTS = os.getenv("ALLOWRD_HOSTS", "localhost,127.0.0.1").split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 INSTALLED_APPS = [
     # Django
@@ -23,9 +23,9 @@ INSTALLED_APPS = [
 
     # DRF and documentation
     'rest_framework',
-    # 'django_filters',
+    'django_filters',
     'rest_framework.authtoken',
-    # 'djoser',
+    'djoser',
 
     # apps
     "api.apps.ApiConfig",
@@ -96,32 +96,32 @@ STATIC_URL = "static/"
 AUTH_USER_MODEL = "users.User"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-#     ],
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework.authentication.TokenAuthentication',
-#     ],
-#     'DEFAULT_FILTER_BACKENDS': [
-#         'django_filters.rest_framework.DjangoFilterBackend'
-#     ],
-#     'DEFAULT_PAGINATION_CLASS': 'api.pagination.LimitPageNumberPagination',
-#     'PAGE_SIZE': 6,
-# }
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'api.paginations.LimitPageNumberPagination',
+    'PAGE_SIZE': 6,
+}
 
-# DJOSER = {
-#     'LOGIN_FIELD': 'email',
-#     'SERIALIZERS': {
-#         'current_user': 'api.serializers.UserSerializer',
-#         'user': 'api.serializers.UserSerializer',
-#     },
-#     'PERMISSIONS': {
-#         'user_list': ['rest_framework.permissions.AllowAny'],
-#         'user': ['rest_framework.permissions.AllowAny'],
-#         'current_user': ['rest_framework.permissions.IsAuthenticated'],
-#     },
-# }
+DJOSER = {
+    'LOGIN_FIELD': 'email',
+    'SERIALIZERS': {
+        'current_user': 'api.serializers.UserSerializer',
+        'user': 'api.serializers.UserSerializer',
+    },
+    'PERMISSIONS': {
+        'user_list': ['rest_framework.permissions.AllowAny'],
+        'user': ['rest_framework.permissions.AllowAny'],
+        'current_user': ['rest_framework.permissions.IsAuthenticated'],
+    },
+}
 
 # CSRF_TRUSTED_ORIGINS = [
 #     'https://thunderfoodgram.hopto.org',

@@ -59,8 +59,8 @@
 
 | Проблема                       | Детали                                                                                                                                                                                                  |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Корневой роутинг               | [users_backend/urls.py](backend/users_backend/urls.py) не включает `api.urls` — HTTP API проекта недоступен с корня приложения                                                                          |
-| Имя view и импорт              | [api/urls.py](backend/api/urls.py) регистрирует `UserViewSet`, в [api/views.py](backend/api/views.py) объявлен только `UsersViewSet` — `ImportError` при загрузке роутера                               |
+| Корневой роутинг ✅             | [users_backend/urls.py](backend/users_backend/urls.py) не включает `api.urls` — HTTP API проекта недоступен с корня приложения                                                                          |
+| Имя view и импорт ✅            | [api/urls.py](backend/api/urls.py) регистрирует `UserViewSet`, в [api/views.py](backend/api/views.py) объявлен только `UsersViewSet` — `ImportError` при загрузке роутера                               |
 | Синтаксис и импорты во views   | Пустой `from django.db.models import (` … `)` вызывает **SyntaxError**; импорт `backend.api.services` при запуске из каталога `backend` часто не резолвится — использовать `from api.services import …` |
 | Djoser отключён                | В `INSTALLED_APPS` закомментирован `'djoser'`, при этом views/serializers/url завязаны на Djoser                                                                                                        |
 | REST_FRAMEWORK закомментирован | Нет `TokenAuthentication` по умолчанию — выдача токена из README не будет работать как задумано                                                                                                         |
@@ -124,9 +124,9 @@ flowchart LR
 
 ### Шаг 1. Восстановить работоспособность роутинга и конфигурации
 
-1. Исправить [api/views.py](backend/api/views.py): удалить пустой импорт из `django.db.models`; заменить `from backend.api.services` на `from api.services import build_absolute_file_url`.
-2. В [api/urls.py](backend/api/urls.py): импортировать `UsersViewSet` (или переименовать класс в `UserViewSet` — главное, **одно имя**).
-3. В [users_backend/urls.py](backend/users_backend/urls.py): добавить префикс API, например:
+1. Исправить [api/views.py](backend/api/views.py): удалить пустой импорт из `django.db.models`; заменить `from backend.api.services` на `from api.services import build_absolute_file_url`. ✅
+2. В [api/urls.py](backend/api/urls.py): импортировать `UsersViewSet` (или переименовать класс в `UserViewSet` — главное, **одно имя**).  ✅
+3. В [users_backend/urls.py](backend/users_backend/urls.py): добавить префикс API, например: ✅
 
 ```python
 from django.urls import include, path
@@ -137,8 +137,8 @@ urlpatterns = [
 ]
 ```
 
-1. В [settings.py](backend/users_backend/settings.py): раскомментировать и поправить `djoser`, `REST_FRAMEWORK` с `TokenAuthentication`; исправить имена переменных `SECRET_KEY`, `ALLOWED_HOSTS` в `os.getenv(...)`.
-2. Исправить [serializers.py](backend/api/serializers.py): удалить `from urllib3 import request`; единообразно `from users.models import User`.
+1. В [settings.py](backend/users_backend/settings.py): раскомментировать и поправить `djoser`, `REST_FRAMEWORK` с `TokenAuthentication`; исправить имена переменных `SECRET_KEY`, `ALLOWED_HOSTS` в `os.getenv(...)`. ✅
+2. Исправить [serializers.py](backend/api/serializers.py): удалить `from urllib3 import request`; единообразно `from users.models import User`. ✅
 
 ### Шаг 2. Тестовые данные (fixtures или data migration)
 

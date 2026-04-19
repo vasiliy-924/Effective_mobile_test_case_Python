@@ -1,10 +1,9 @@
-from urllib3 import request
-from backend.users.models import User
 from djoser.serializers import UserSerializer as DjoserUserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
 from api.services import build_absolute_file_url
+from users.models import User
 
 
 class SetAvatarSerializer(serializers.Serializer):

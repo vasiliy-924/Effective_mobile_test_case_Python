@@ -1,15 +1,15 @@
 from http import HTTPStatus
 
-from django.db.models import (
-
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly
 )
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from backend.api.services import build_absolute_file_url
 from djoser.views import UserViewSet as DjoserUserViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from api.paginations import LimitPageNumberPagination
+from api.services import build_absolute_file_url
 from api.serializers import (
     SetAvatarSerializer,
     UserSerializer,

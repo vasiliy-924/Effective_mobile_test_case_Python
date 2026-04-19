@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from api.views import UserViewSet
+from api.views import UsersViewSet
 from api.mock_views import MockBookListView, MockOrkerDetailView
 
 
@@ -9,7 +9,7 @@ api_v1_router = DefaultRouter()
 
 api_v1_router.register(
     r"users",
-    UserViewSet,
+    UsersViewSet,
     basename="users"
 )
 
