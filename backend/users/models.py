@@ -14,6 +14,14 @@ from users.validators import validate_username_value
 class User(AbstractUser):
     """The user's model."""
 
+    class Roles(models.TextChoices):
+        """User roles."""
+
+        ADMIN = "admin", "Админ"
+        MANAGER = "manager", "Менеджер"
+        USER = "user", "Пользователь"
+        GUEST = "guest", "Гость"
+
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ("username", "first_name", "last_name")
 
@@ -34,6 +42,16 @@ class User(AbstractUser):
         max_length=EMAIL_MAX_LENGTH,
         unique=True
     )
+    role = models.CharField(
+        verbose_name="роль",
+        max_length=max(len(role) for role, _ in Roles.choices),
+        choices=Roles.choices,
+        default=Roles.GUEST,
+    )
+    is_active = models.BooleanField(
+        verbose_name="Активный",
+        default=True
+    )
     # Optional models
     username = models.CharField(
         verbose_name="никнейм",
@@ -51,10 +69,11 @@ class User(AbstractUser):
     )
 
     class Meta:
+        """Meta options for User model."""
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
         ordering = ("username",)
-    
+
     def __str__(self) -> str:
         """String representation of the user."""
-        return self.username[:STR_REPRESENTATION_MAX_LENGTH]
+        return str(self.username)[:STR_REPRESENTATION_MAX_LENGTH]
