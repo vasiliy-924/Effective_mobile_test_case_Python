@@ -1,6 +1,4 @@
 from django.contrib.auth.models import AbstractUser
-from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.db import models
 
 from users_backend.constants import (
@@ -11,16 +9,63 @@ from users_backend.constants import (
 from users.validators import validate_username_value
 
 
-class User(AbstractUser):
-    """The user's model."""
+class BusinessElement(models.Model):
+    """The business application object to which the rights are issued."""
 
-    class Roles(models.TextChoices):
-        """User roles."""
+    code = models.SlugField(
+        verbose_name="код",
+        max_length=32,
+        unique=True
+    )
+    name = models.CharField(
+        verbose_name="название",
+        max_length=128
+    )
+
+    class Meta:
+        verbose_name = "Элемент"
+        verbose_name_plural = "Элементы"
+        ordering = ("code",)
+
+    def __str__(self) -> str:
+        return str(self.name)[:STR_REPRESENTATION_MAX_LENGTH]
+
+
+class Role(models.Model):
+    """User role with a fixed code and display name."""
+
+    class Codes(models.TextChoices):
+        """Supported role codes."""
 
         ADMIN = "admin", "Админ"
         MANAGER = "manager", "Менеджер"
         USER = "user", "Пользователь"
         GUEST = "guest", "Гость"
+
+    code = models.SlugField(
+        verbose_name="код",
+        max_length=max(len(code) for code, _ in Codes.choices),
+        choices=Codes.choices,
+        unique=True,
+        default=Codes.GUEST,
+    )
+    name = models.CharField(
+        verbose_name="название",
+        max_length=128,
+        unique=True,
+    )
+
+    class Meta:
+        verbose_name = "Роль"
+        verbose_name_plural = "Роли"
+        ordering = ("code",)
+
+    def __str__(self) -> str:
+        return str(self.name)[:STR_REPRESENTATION_MAX_LENGTH]
+
+
+class User(AbstractUser):
+    """The user's model."""
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ("username", "first_name", "last_name")
@@ -42,11 +87,14 @@ class User(AbstractUser):
         max_length=EMAIL_MAX_LENGTH,
         unique=True
     )
-    role = models.CharField(
+    role = models.ForeignKey(
+        "Role",
         verbose_name="роль",
-        max_length=max(len(role) for role, _ in Roles.choices),
-        choices=Roles.choices,
-        default=Roles.GUEST,
+        to_field="code",
+        db_column="role",
+        on_delete=models.PROTECT,
+        related_name="users",
+        default=Role.Codes.GUEST,
     )
     is_active = models.BooleanField(
         verbose_name="Активный",
@@ -77,3 +125,44 @@ class User(AbstractUser):
     def __str__(self) -> str:
         """String representation of the user."""
         return str(self.username)[:STR_REPRESENTATION_MAX_LENGTH]
+
+
+class AccessRoleRule(models.Model):
+    """Rule: role + element + permission set."""
+
+    role = models.ForeignKey(
+        "Role",
+        verbose_name="роль",
+        to_field="code",
+        db_column="role",
+        on_delete=models.CASCADE,
+        related_name="access_rules"
+    )
+    element = models.ForeignKey(
+        "BusinessElement",
+        on_delete=models.CASCADE,
+        related_name="access_rules",
+    )
+
+    read_permission = models.BooleanField(default=False)
+    read_all_permission = models.BooleanField(default=False)
+    create_permission = models.BooleanField(default=False)
+    update_permission = models.BooleanField(default=False)
+    update_all_permission = models.BooleanField(default=False)
+    delete_permission = models.BooleanField(default=False)
+    delete_all_permission = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = "Правило доступа"
+        verbose_name_plural = "Правила доступа"
+        constraints = (
+            models.UniqueConstraint(
+                fields=("role", "element"),
+                name="uniq_role_element_access_rule",
+            ),
+        )
+
+    def __str__(self) -> str:
+        s = f"{self.role_id}:{self.element_id}"
+        return s[:STR_REPRESENTATION_MAX_LENGTH]
+   
