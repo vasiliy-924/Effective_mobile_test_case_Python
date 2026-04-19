@@ -18,7 +18,7 @@ auth_urlpatterns = [
 ]
 demo_urlpattens = [
     path("books/", MockBookListView.as_view(), name="books"),
-    path("order/", MockOrkerDetailView.as_view(), name="order")
+    path("order/<int:pk>/", MockOrkerDetailView.as_view(), name="order"),
 ]
 
 urlpatterns = [

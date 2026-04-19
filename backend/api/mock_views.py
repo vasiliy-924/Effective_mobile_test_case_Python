@@ -1,8 +1,9 @@
-from rest_framework.decorators import permission_classes
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
+
+from users.services import HTTP_METHOD_TO_ACTION, user_has_element_access
 
 
 class MockOrkerDetailView(APIView):
@@ -18,8 +19,15 @@ class MockOrkerDetailView(APIView):
         """
         GET: Return static order detail if user is authenticated.
         """
-        allowed = True
-        if not allowed:
+        action = HTTP_METHOD_TO_ACTION.get(request.method)
+        if action is None:
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        if not user_has_element_access(
+            request.user,
+            "order",
+            action,
+            owner_id=request.user.pk,
+        ):
             return Response(
                 {"detail": "Нет прав на этот ресурс."},
                 status=status.HTTP_403_FORBIDDEN
@@ -50,6 +58,19 @@ class MockBookListView(APIView):
         Returns:
             Response: A Response object containing a static list of books.
         """
+        action = HTTP_METHOD_TO_ACTION.get(request.method)
+        if action is None:
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        if not user_has_element_access(
+            request.user,
+            "book",
+            action,
+            owner_id=None,
+        ):
+            return Response(
+                {"detail": "Нет прав на этот ресурс."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         return Response(
             {
                 "resource": "book",

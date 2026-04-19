@@ -140,7 +140,7 @@ urlpatterns = [
 1. В [settings.py](backend/users_backend/settings.py): раскомментировать и поправить `djoser`, `REST_FRAMEWORK` с `TokenAuthentication`; исправить имена переменных `SECRET_KEY`, `ALLOWED_HOSTS` в `os.getenv(...)`. ✅
 2. Исправить [serializers.py](backend/api/serializers.py): удалить `from urllib3 import request`; единообразно `from users.models import User`. ✅
 
-### Шаг 2. Тестовые данные (fixtures или data migration)
+### Шаг 2. Тестовые данные (fixtures или data migration) ✅
 
 Пример фрагмента data-migration (идемпотентно через `get_or_create`):
 
