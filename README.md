@@ -46,6 +46,14 @@ python3 manage.py runserver
 docker compose -f docker-compose.yml up --build
 ```
 
+После старта API будет доступно на `http://localhost:8000`.
+Compose сам:
+- поднимает PostgreSQL;
+- ждет готовности БД через `healthcheck`;
+- применяет миграции;
+- загружает demo users через `seed_demo_users`;
+- запускает backend через `gunicorn`.
+
 ## Переменные окружения
 
 Скопируйте `.env.example` в `.env` и заполните значения.
@@ -59,6 +67,11 @@ docker compose -f docker-compose.yml up --build
 - `POSTGRES_PASSWORD`
 - `DB_HOST`
 - `DB_PORT`
+
+Если переменные Postgres не заданы в `.env`, Docker Compose использует безопасные demo-default значения:
+- `POSTGRES_DB=django`
+- `POSTGRES_USER=django`
+- `POSTGRES_PASSWORD=django`
 
 ## API Контракт
 

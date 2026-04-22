@@ -1,23 +1,50 @@
-name: 30_effective_mobide_test_case_python
+name: effective_mobile_test_case_python
 
 volumes:
   pg_data:
-  static:
+  media:
 
 services:
   db:
     container_name: effective-db
     image: postgres:16
     env_file: .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-django}
+      POSTGRES_USER: ${POSTGRES_USER:-django}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-django}
     volumes:
       - pg_data:/var/lib/postgresql/data
-    
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-django} -d ${POSTGRES_DB:-django}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   backend:
     container_name: effective-backend
     build: backend/
     env_file: .env
+    environment:
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-True}
+      SECRET_KEY: ${SECRET_KEY:-change-me}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-127.0.0.1,localhost}
+      POSTGRES_DB: ${POSTGRES_DB:-django}
+      POSTGRES_USER: ${POSTGRES_USER:-django}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-django}
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
+      PYTHONUNBUFFERED: "1"
     volumes:
-      - static:/static
-      - ../data:/data
+      - media:/app/media
+    ports:
+      - "8000:8000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py seed_demo_users &&
+             gunicorn --bind 0.0.0.0:8000 users_backend.wsgi:application"
