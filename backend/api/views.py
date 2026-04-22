@@ -119,7 +119,8 @@ class CurrentUserDeleteView(APIView):
 class RuleViewSet(viewsets.ModelViewSet):
     """Admin-only CRUD API for RBAC rules."""
 
-    queryset = AccessRoleRule.objects.select_related("role", "element").order_by("id")
+    queryset = AccessRoleRule.objects.select_related(
+        "role", "element"
+    ).order_by("id")
     serializer_class = RuleSerializer
     permission_classes = (IsAuthenticated, IsAdminRole)
-    

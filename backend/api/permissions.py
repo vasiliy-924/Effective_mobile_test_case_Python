@@ -21,7 +21,10 @@ class HasElementAccess(BasePermission):
     message = "You do not have permission for this resource."
 
     def has_permission(self, request, view):
-        if request.method in SAFE_METHODS and not request.user.is_authenticated:
+        if (
+            request.method in SAFE_METHODS
+            and not request.user.is_authenticated
+        ):
             return False
         if not request.user.is_authenticated:
             return False

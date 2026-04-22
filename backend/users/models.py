@@ -165,4 +165,3 @@ class AccessRoleRule(models.Model):
     def __str__(self) -> str:
         s = f"{self.role_id}:{self.element_id}"
         return s[:STR_REPRESENTATION_MAX_LENGTH]
-   

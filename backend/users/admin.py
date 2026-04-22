@@ -36,7 +36,12 @@ class AccessRoleRuleAdmin(admin.ModelAdmin):
         "delete_all_permission",
     )
     list_filter = ("role", "element")
-    search_fields = ("role__code", "role__name", "element__code", "element__name")
+    search_fields = (
+        "role__code",
+        "role__name",
+        "element__code",
+        "element__name"
+    )
 
 
 @admin.register(User)
@@ -57,7 +62,7 @@ class UserAdmin(BaseUserAdmin):
         "username",
         "email",
         "first_name",
-        "last_name", 
+        "last_name",
         "patronymic",
         "role__code",
         "role__name",
